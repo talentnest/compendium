@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'compendium'
 require 'compendium/count_query'
+require 'active_support/core_ext'
 
 class SingleCounter
   def count
