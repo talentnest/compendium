@@ -142,7 +142,7 @@ module Compendium
     end
 
     def execute_query(command)
-      ::ActiveRecord::Base.connection.select_all(command)
+      ::ActiveRecord::Base.connection.select_all(command).to_a
     end
 
     def arg_is_report?(arg)
