@@ -57,7 +57,9 @@ module Compendium::Presenters
 
           choices = option.choices
           choices = ctx.instance_exec(&choices) if choices.respond_to?(:call)
-          out << dropdown(form, choices, option.options)
+          html_opts = option.multiple? ? { multiple: true } : {}
+          select_opts = option.options.except('multiple')
+          out << dropdown(form, choices, select_opts, html_opts)
 
         when :boolean, :radio
           choices = if option.radio?
@@ -95,9 +97,14 @@ module Compendium::Presenters
       end
     end
 
-    def dropdown(form, choices = {}, options = {})
+    def dropdown(form, choices = {}, options = {}, html_options = {})
       content_tag('div', class: 'option-dropdown') do
-        form.select option.name, choices, options.symbolize_keys
+        if html_options[:multiple]
+          # For multiple selects, render with explicit name including [] and multiple attribute
+          select_tag "report[#{option.name}][]", options_for_select(choices), options.symbolize_keys.merge(multiple: true, id: "report_#{option.name}")
+        else
+          form.select option.name, choices, options.symbolize_keys, html_options
+        end
       end
     end
 
